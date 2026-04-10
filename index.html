@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Green Space ☁️🍃</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-pastel: #B3E5FC;
+            --green-pastel: #C8E6C9;
+            --bg-color: #FDFCF0;
+            --text-color: #546E7A;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Mali', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* สมุดเปิด */
+        .book-container {
+            width: 90vw;
+            max-width: 800px;
+            height: 500px;
+            perspective: 1500px;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        .page {
+            width: 50%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform-origin: left;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: inset 3px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        /* หน้าที่ 1 (ปก) */
+        .page1 {
+            z-index: 5;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0 15px 15px 0;
+        }
+
+        /* หน้าที่ 2 (ฝั่งซ้าย - Spotify) */
+        .page2 {
+            z-index: 4;
+            background: linear-gradient(135deg, var(--blue-pastel), var(--green-pastel));
+            left: 0;
+            transform: none !important;
+            border-radius: 15px 0 0 15px;
+            cursor: default;
+        }
+
+        /* หน้าที่ 3 (ฝั่งขวา - ข้อความ) */
+        .page3 {
+            z-index: 3;
+            background: white;
+            border-radius: 0 15px 15px 0;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        /* เมื่อเปิดสมุด */
+        .flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Spotify UI */
+        .spotify-container {
+            padding: 30px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .album-art {
+            width: 180px;
+            height: 180px;
+            background: white;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .song-title { margin: 10px 0 5px; font-weight: bold; font-size: 22px; }
+        .artist-name { margin: 0; font-size: 14px; opacity: 0.8; }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #play-btn {
+            background: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #play-btn:hover { transform: scale(1.1); }
+
+        /* Lyrics Styling */
+        .lyrics-box {
+            margin-top: 20px;
+            height: 80px;
+            overflow: hidden;
+            font-size: 16px;
+            font-weight: bold;
+            color: #37474F;
+        }
+
+        .lyric-line {
+            transition: all 0.5s ease;
+            opacity: 0.3;
+            transform: translateY(20px);
+        }
+
+        .lyric-line.active {
+            opacity: 1;
+            transform: translateY(0);
+            color: #2E7D32;
+        }
+
+        .back-text {
+            transform: rotateY(-180deg); /* แก้ตัวอักษรกลับด้าน */
+            display: none;
+        }
+
+        .swipe-hint {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="book-container">
+        <div class="book" id="myBook">
+            <div class="page page1" id="cover" onclick="openBook()">
+                <div style="font-size: 50px;">☁️</div>
+                <h2 style="margin-top: 20px;">Sorry na ka</h2>
+                <p>to P'Ta</p>
+                <div class="swipe-hint">ปัดซ้ายเพื่อเปิดอ่าน</div>
+            </div>
+
+            <div class="page page2">
+                <div class="spotify-container">
+                    <div class="album-art">🍃</div>
+                    <p class="song-title">คู่กัน</p>
+                    <p class="artist-name">Scrubb</p>
+                    
+                    <div class="controls">
+                        <button id="play-btn">▶</button>
+                        <div class="lyrics-box" id="lyrics-container">
+                            <p id="line1" class="lyric-line">กด Play เพื่อฟังนะ...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page page3">
+                <h3>เค้าขอโทษนะ...</h3>
+                <p>วันนี้ที่งอนไป 2 เรื่อง เค้าขอโทษจริงๆ นะคะ ที่จริงก็เพราะหวงนั่นแหละ (หวงมากด้วย!)</p>
+                <p>ขอบคุณที่อดทนกับยัยตัวแสบคนนี้เสมอ ขอบคุณที่รักกันขนาดนี้นะ</p>
+                <p>สัญญาว่าจะพยายามงอนให้น้อยลง (นิดนึง) รักเธอที่สุดเลยยย 💚💙</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio" src="scrubb.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const lyricContainer = document.getElementById('line1');
+
+        // ข้อมูลเนื้อเพลงและเวลา (วินาที) - ปรับตามไฟล์ mp3 ของคุณ
+        const lyrics = [
+            { time: 0, text: "🎵 กำลังเริ่มเพลง..." },
+            { time: 13, text: "เดินผ่าน มองคนไม่รู้จัก" },
+            { time: 17, text: "วนเวียนและเป็นอยู่..." },
+            { time: 20, text: "ดูไปก็รู้สึก อย่างเคย เหมือนเคย" },
+            { time: 26, text: "ลองมองผ่าน ความทรงจำที่มีอยู่" },
+            { time: 30, text: "คงมีเพียงฉันคนหนึ่ง คนเดียวที่รู้จัก" },
+            { time: 35, text: "อย่างเดิม เหมือนเดิม..." },
+            { time: 42, text: "วันเดือนปีเคยเป็นแค่เพียงสายลมผ่าน" },
+            { time: 47, text: "ใครคนหนึ่งทำเวลาฉันให้รู้สึกมีความหมาย" },
+            { time: 54, text: "คนๆ หนึ่งได้เปลี่ยนแปลงทุกๆ อย่างไป" },
+            { time: 59, text: "คนที่ทำให้ยิ้มได้ ไม่ว่าเราจะเศร้าเพียงไหน" },
+            { time: 66, text: "เธอคนหนึ่ง ทำให้รักฉันเปลี่ยนไป" },
+            { time: 71, text: "ก็ไม่รู้ไม่เข้าใจ อาจเป็นเพราะคู่กัน..." }
+        ];
+
+        function openBook() {
+            document.getElementById('cover').classList.add('flipped');
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = 'play';
+            } else {
+                audio.pause();
+                playBtn.innerText = 'stop';
+            }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+            const currentLyric = lyrics.findLast(l => currentTime >= l.time);
+            
+            if (currentLyric && lyricContainer.innerText !== currentLyric.text) {
+                lyricContainer.style.opacity = 0;
+                setTimeout(() => {
+                    lyricContainer.innerText = currentLyric.text;
+                    lyricContainer.style.opacity = 1;
+                    lyricContainer.classList.add('active');
+                }, 200);
+            }
+        });
+    </script>
+</body>
+                                                                                        </html>
+
