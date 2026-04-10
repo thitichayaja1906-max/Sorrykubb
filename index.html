@@ -11,216 +11,164 @@
             --green-pastel: #C8E6C9;
             --bg-color: #FDFCF0;
             --text-color: #546E7A;
+            --book-width: 340px; 
+            --book-height: 500px;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: var(--bg-color);
             font-family: 'Mali', cursive;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; color: var(--text-color);
             overflow: hidden;
-            color: var(--text-color);
         }
 
-        /* สมุดเปิด */
         .book-container {
-            width: 90vw;
-            max-width: 800px;
-            height: 500px;
+            position: relative;
+            width: var(--book-width);
+            height: var(--book-height);
             perspective: 1500px;
         }
 
-        .book {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-        }
-
         .page {
-            width: 50%;
-            height: 100%;
             position: absolute;
-            top: 0;
-            right: 0;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), z-index 0s 0.3s;
             transform-origin: left;
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-            transform-style: preserve-3d;
-            cursor: pointer;
-            box-shadow: inset 3px 0px 10px rgba(0,0,0,0.1);
+            backface-visibility: hidden;
+            display: flex; flex-direction: column;
+            overflow: hidden;
         }
 
-        /* หน้าที่ 1 (ปก) */
-        .page1 {
-            z-index: 5;
-            background: white;
+        /* สถานะการพลิกหน้า */
+        .page.flipped {
+            transform: rotateY(-180deg);
+            z-index: 0;
+        }
+
+        /* ลำดับหน้ากระดาษ */
+        #page1 { z-index: 3; }
+        #page2 { z-index: 2; }
+        #page3 { z-index: 1; }
+
+        .content {
+            padding: 30px;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 0 15px 15px 0;
-        }
-
-        /* หน้าที่ 2 (ฝั่งซ้าย - Spotify) */
-        .page2 {
-            z-index: 4;
-            background: linear-gradient(135deg, var(--blue-pastel), var(--green-pastel));
-            left: 0;
-            transform: none !important;
-            border-radius: 15px 0 0 15px;
-            cursor: default;
-        }
-
-        /* หน้าที่ 3 (ฝั่งขวา - ข้อความ) */
-        .page3 {
-            z-index: 3;
-            background: white;
-            border-radius: 0 15px 15px 0;
-            padding: 40px;
-            box-sizing: border-box;
-        }
-
-        /* เมื่อเปิดสมุด */
-        .flipped {
-            transform: rotateY(-180deg);
-        }
-
-        /* Spotify UI */
-        .spotify-container {
-            padding: 30px;
             text-align: center;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
             box-sizing: border-box;
+        }
+
+        /* Spotify Page Style */
+        .spotify-bg {
+            background: linear-gradient(135deg, var(--blue-pastel), var(--green-pastel));
         }
 
         .album-art {
-            width: 180px;
-            height: 180px;
-            background: white;
-            margin: 0 auto 20px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 80px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 160px; height: 160px;
+            background: white; border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 60px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
-        .song-title { margin: 10px 0 5px; font-weight: bold; font-size: 22px; }
-        .artist-name { margin: 0; font-size: 14px; opacity: 0.8; }
-
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .controls-row {
+            display: flex; gap: 15px; margin: 15px 0;
         }
 
-        #play-btn {
-            background: white;
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .btn-circle {
+            background: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        #play-btn:hover { transform: scale(1.1); }
-
-        /* Lyrics Styling */
         .lyrics-box {
-            margin-top: 20px;
-            height: 80px;
-            overflow: hidden;
-            font-size: 16px;
-            font-weight: bold;
-            color: #37474F;
+            height: 80px; font-weight: bold; font-size: 15px;
+            line-height: 1.4; margin-top: 10px; color: #37474F;
         }
 
-        .lyric-line {
-            transition: all 0.5s ease;
-            opacity: 0.3;
-            transform: translateY(20px);
+        .nav-btn {
+            background: rgba(0,0,0,0.05); border: none;
+            padding: 10px 20px; border-radius: 20px;
+            font-family: 'Mali'; cursor: pointer;
+            margin-top: auto; font-size: 12px;
         }
 
-        .lyric-line.active {
-            opacity: 1;
-            transform: translateY(0);
-            color: #2E7D32;
-        }
-
-        .back-text {
-            transform: rotateY(-180deg); /* แก้ตัวอักษรกลับด้าน */
-            display: none;
-        }
-
-        .swipe-hint {
-            position: absolute;
-            bottom: 20px;
-            font-size: 12px;
-            opacity: 0.5;
-        }
+        .nav-btn:hover { background: rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
+    <audio id="audio" src="scrubb.mp3"></audio>
+
     <div class="book-container">
-        <div class="book" id="myBook">
-            <div class="page page1" id="cover" onclick="openBook()">
-                <div style="font-size: 50px;">☁️</div>
-                <h2 style="margin-top: 20px;">Sorry na ka</h2>
-                <p>to P'Ta</p>
-                <div class="swipe-hint">ปัดซ้ายเพื่อเปิดอ่าน</div>
-            </div>
-
-            <div class="page page2">
-                <div class="spotify-container">
-                    <div class="album-art">🍃</div>
-                    <p class="song-title">คู่กัน</p>
-                    <p class="artist-name">Scrubb</p>
-                    
-                    <div class="controls">
-                        <button id="play-btn">▶</button>
-                        <div class="lyrics-box" id="lyrics-container">
-                            <p id="line1" class="lyric-line">กด Play เพื่อฟังนะ...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page page3">
-                <h3>เค้าขอโทษนะ...</h3>
-                <p>วันนี้ที่งอนไป 2 เรื่อง เค้าขอโทษจริงๆ นะคะ ที่จริงก็เพราะหวงนั่นแหละ (หวงมากด้วย!)</p>
-                <p>ขอบคุณที่อดทนกับยัยตัวแสบคนนี้เสมอ ขอบคุณที่รักกันขนาดนี้นะ</p>
-                <p>สัญญาว่าจะพยายามงอนให้น้อยลง (นิดนึง) รักเธอที่สุดเลยยย 💚💙</p>
+        
+        <div class="page" id="page3">
+            <div class="content">
+                <h3 style="margin-top:0;">จากใจยัยตัวแสบ... 💙</h3>
+                <p style="font-size: 14px; line-height: 1.8;">
+                    ขอบคุณที่อยู่ "คู่กัน" มาถึงตอนนี้นะ<br>
+                    เค้ารู้ตัวว่าเค้าชอบงอนเรื่องไร้สาระบ่อยๆ<br>
+                    แต่เธอก็ยังเป็นพื้นที่สีเขียวที่เย็นฉ่ำให้เค้าเสมอ
+                </p>
+                <p style="font-size: 14px; font-weight: bold;">รักเธอที่สุดเลยนะคนดี</p>
+                <div style="font-size: 40px; margin-top: 10px;">🍃☁️💙</div>
+                <button class="nav-btn" onclick="prevPage(2)">⬅️ ย้อนกลับไปฟังเพลง</button>
             </div>
         </div>
-    </div>
 
-    <audio id="audio" src="scrubb.mp3"></audio>
+        <div class="page spotify-bg" id="page2">
+            <div class="content">
+                <div class="album-art">🎶</div>
+                <div style="font-weight: bold; font-size: 20px;">คู่กัน</div>
+                <div style="font-size: 13px; opacity: 0.8;">Scrubb</div>
+
+                <div class="controls-row">
+                    <button id="play-pause-btn" class="btn-circle" style="font-size: 20px;">▶</button>
+                    <button id="stop-btn" class="btn-circle" style="font-size: 14px;">⬛</button>
+                </div>
+
+                <div class="lyrics-box" id="lyrics-display">
+                    กดปุ่มเพื่อเริ่มฟังนะ...
+                </div>
+
+                <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
+                    <button class="nav-btn" onclick="prevPage(1)">⬅️ กลับหน้าปก</button>
+                    <button class="nav-btn" onclick="nextPage(2)">อ่านข้อความ ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="page1">
+            <div class="content">
+                <div style="font-size: 70px;">📔</div>
+                <h2 style="margin: 10px 0;">บันทึกของสีฟ้า</h2>
+                <p style="opacity: 0.6; font-size: 14px;">ถึง พื้นที่สีเขียวของเค้า</p>
+                <br>
+                <button class="nav-btn" style="background: var(--blue-pastel);" onclick="nextPage(1)">เปิดอ่านบันทึก ➡️</button>
+            </div>
+        </div>
+
+    </div>
 
     <script>
         const audio = document.getElementById('audio');
-        const playBtn = document.getElementById('play-btn');
-        const lyricContainer = document.getElementById('line1');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const lyricDisplay = document.getElementById('lyrics-display');
 
-        // ข้อมูลเนื้อเพลงและเวลา (วินาที) - ปรับตามไฟล์ mp3 ของคุณ
         const lyrics = [
-            { time: 0, text: "🎵 กำลังเริ่มเพลง..." },
-            { time: 13, text: "เดินผ่าน มองคนไม่รู้จัก" },
+            { time: 0, text: "🎵 เตรียมฟังเพลงคู่กันนะ..." },
+            { time: 13, text: "เดินผ่าน มองคนไม่รู้จัก..." },
             { time: 17, text: "วนเวียนและเป็นอยู่..." },
             { time: 20, text: "ดูไปก็รู้สึก อย่างเคย เหมือนเคย" },
             { time: 26, text: "ลองมองผ่าน ความทรงจำที่มีอยู่" },
@@ -234,34 +182,50 @@
             { time: 71, text: "ก็ไม่รู้ไม่เข้าใจ อาจเป็นเพราะคู่กัน..." }
         ];
 
-        function openBook() {
-            document.getElementById('cover').classList.add('flipped');
+        // ฟังก์ชันพลิกหน้าไปข้างหน้า
+        function nextPage(pageNum) {
+            document.getElementById('page' + pageNum).classList.add('flipped');
         }
 
-        playBtn.addEventListener('click', () => {
+        // ฟังก์ชันพลิกหน้าย้อนกลับ
+        function prevPage(pageNum) {
+            document.getElementById('page' + pageNum).classList.remove('flipped');
+        }
+
+        // ระบบควบคุมเพลง
+        playPauseBtn.addEventListener('click', () => {
             if (audio.paused) {
                 audio.play();
-                playBtn.innerText = 'play';
+                playPauseBtn.innerText = '⏸';
             } else {
                 audio.pause();
-                playBtn.innerText = 'stop';
+                playPauseBtn.innerText = '▶';
             }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            audio.pause();
+            audio.currentTime = 0;
+            playPauseBtn.innerText = '▶';
+            lyricDisplay.innerText = "เริ่มฟังใหม่อีกครั้งนะ...";
         });
 
         audio.addEventListener('timeupdate', () => {
             const currentTime = audio.currentTime;
             const currentLyric = lyrics.findLast(l => currentTime >= l.time);
-            
-            if (currentLyric && lyricContainer.innerText !== currentLyric.text) {
-                lyricContainer.style.opacity = 0;
+            if (currentLyric && lyricDisplay.innerText !== currentLyric.text) {
+                lyricDisplay.style.opacity = 0;
                 setTimeout(() => {
-                    lyricContainer.innerText = currentLyric.text;
-                    lyricContainer.style.opacity = 1;
-                    lyricContainer.classList.add('active');
-                }, 200);
+                    lyricDisplay.innerText = currentLyric.text;
+                    lyricDisplay.style.opacity = 1;
+                }, 150);
             }
+        });
+
+        audio.addEventListener('ended', () => {
+            playPauseBtn.innerText = '▶';
+            lyricDisplay.innerText = "ขอบคุณที่ฟังจนจบนะ... หายงอนเค้านะ 💚";
         });
     </script>
 </body>
-                                                                                        </html>
-
+</html>
